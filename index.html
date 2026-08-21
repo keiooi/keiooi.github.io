@@ -1,333 +1,955 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>keioi</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>keioi</title>
+
+    <!-- 使用 Google Font 现代无衬线字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ========== CSS 变量 · 流行深色玻璃态 ========== */
+        :root {
+            --bg-primary: #0b0e1a;
+            --bg-secondary: #14182b;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8);
+
+            --neon-cyan: #00f2fe;
+            --neon-pink: #fe6786;
+            --neon-purple: #a18cd1;
+            --neon-blue: #4facfe;
+
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+
+            --radius-big: 28px;
+            --radius-card: 20px;
+            --radius-btn: 40px;
+
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ========== 全局重置 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            min-height: 100vh;
+            background: var(--bg-primary);
+            background-image: radial-gradient(ellipse at 10% 20%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(254, 103, 134, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(79, 172, 254, 0.05) 0%, transparent 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ========== 背景 ========== */
+        .bg-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .bg-glow--1 {
+            width: 400px;
+            height: 400px;
+            top: -10%;
+            right: -5%;
+            background: var(--neon-pink);
+            animation: floatGlow 12s ease-in-out infinite alternate;
+        }
+
+        .bg-glow--2 {
+            width: 350px;
+            height: 350px;
+            bottom: -10%;
+            left: -5%;
+            background: var(--neon-cyan);
+            animation: floatGlow 15s ease-in-out infinite alternate-reverse;
+        }
+
+        .bg-glow--3 {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            left: 40%;
+            background: var(--neon-purple);
+            opacity: 0.2;
+            animation: floatGlow 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatGlow {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(40px, -40px) scale(1.2);
+            }
+        }
+
+        /* ========== 主容器 ========== */
+        .glass {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1280px;
+            min-height: 80vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-big);
+            box-shadow: var(--glass-shadow), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: min-height 0.4s ease;
+        }
+
+        /* ========== 布局：桌面端左右 ========== */
+        @media (min-width: 820px) {
+            .glass {
+                flex-direction: row;
+                min-height: 72vh;
+            }
+        }
+
+        /* ========== 左侧导航 ========== */
+        .dashboard {
+            flex: 0 0 260px;
+            padding: 2rem 1.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            background: rgba(0, 0, 0, 0.25);
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        @media (max-width: 819px) {
+            .dashboard {
+                flex: none;
+                width: 100%;
+                border-radius: var(--radius-big) var(--radius-big) 0 0;
+                padding: 1.2rem 1rem 0.8rem;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 0.6rem 0.8rem;
+                background: rgba(0, 0, 0, 0.3);
+                border-right: none;
+                border-bottom: 1px solid var(--glass-border);
+            }
+        }
+
+        /* ===== 用户信息 ===== */
+        .user {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform var(--transition);
+            text-align: center;
+            padding: 0.2rem 0.4rem;
+            border-radius: var(--radius-card);
+            width: 100%;
+        }
+        .user:hover {
+            transform: scale(1.02);
+        }
+        .user:active {
+            transform: scale(0.95);
+        }
+
+        .user__avatar {
+            font-size: 3.2rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.2));
+            transition: filter var(--transition);
+        }
+        .user:hover .user__avatar {
+            filter: drop-shadow(0 0 30px rgba(0, 242, 254, 0.4));
+        }
+
+        .user__name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 0.1rem;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+        .user__bio {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            font-weight: 400;
+            -webkit-text-fill-color: var(--text-secondary);
+            background: none;
+            margin-top: 0.05rem;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 819px) {
+            .user {
+                flex-direction: row;
+                gap: 0.6rem;
+                padding: 0.2rem 0.6rem 0.2rem 0.2rem;
+                width: auto;
+            }
+            .user__avatar {
+                font-size: 2.2rem;
+            }
+            .user__name {
+                font-size: 1.1rem;
+            }
+            .user__bio {
+                font-size: 0.65rem;
+                display: none;
+            }
+        }
+
+        /* ===== 导航链接 ===== */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            width: 100%;
+        }
+
+        @media (max-width: 819px) {
+            .links {
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+                width: auto;
+                gap: 0.25rem;
+            }
+        }
+
+        .link {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-btn);
+            cursor: pointer;
+            transition: all var(--transition);
+            background: transparent;
+            border: 1px solid transparent;
+            font-weight: 500;
+            color: var(--text-secondary);
+            user-select: none;
+            white-space: nowrap;
+            position: relative;
+        }
+        .link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            transform: translateX(3px);
+        }
+        .link:active {
+            transform: scale(0.95);
+        }
+
+        .link__icon {
+            font-size: 1.3rem;
+            line-height: 1;
+            transition: transform var(--transition);
+        }
+        .link:hover .link__icon {
+            transform: scale(1.1);
+        }
+        .link__label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        /* 选中状态 - 霓虹风格 */
+        .link--active {
+            background: rgba(0, 242, 254, 0.08);
+            border-color: rgba(0, 242, 254, 0.25);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.05);
+            color: var(--text-primary);
+        }
+        .link--active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            height: 60%;
+            width: 3px;
+            background: var(--neon-cyan);
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 12px var(--neon-cyan);
+        }
+        .link--active .link__icon {
+            filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.3));
+        }
+
+        @media (max-width: 819px) {
+            .link {
+                padding: 0.35rem 0.9rem;
+                gap: 0.4rem;
+                border-radius: 30px;
+                font-size: 0.8rem;
+            }
+            .link__icon {
+                font-size: 1.1rem;
+            }
+            .link__label {
+                font-size: 0.75rem;
+            }
+            .link:hover {
+                transform: none;
+            }
+            .link--active::before {
+                display: none;
+            }
+            .link--active {
+                border-color: var(--neon-cyan);
+                background: rgba(0, 242, 254, 0.1);
+            }
+        }
+
+        /* ===== Pro 区域 ===== */
+        .pro {
+            margin-top: auto;
+            width: 100%;
+            padding: 0.8rem 1.2rem;
+            border-radius: var(--radius-card);
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(254, 103, 134, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: default;
+            transition: all var(--transition);
+        }
+        .pro:hover {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.15), rgba(254, 103, 134, 0.08));
+            border-color: rgba(0, 242, 254, 0.15);
+        }
+        .pro__text {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            flex: 1;
+            line-height: 1.4;
+            letter-spacing: 0.2px;
+        }
+        .pro__emoji {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.2));
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.2));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.4));
+            }
+        }
+
+        @media (max-width: 819px) {
+            .pro {
+                margin-top: 0;
+                padding: 0.4rem 0.8rem;
+                border-radius: 30px;
+                width: auto;
+                flex: 0 1 auto;
+            }
+            .pro__text {
+                font-size: 0.65rem;
+            }
+            .pro__emoji {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ========== 右侧内容区 ========== */
+        .content {
+            flex: 1;
+            padding: 2rem 2.2rem 2rem 2.2rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+
+        @media (max-width: 819px) {
+            .content {
+                padding: 1.2rem 1rem 1.5rem;
+                min-height: 220px;
+            }
+        }
+
+        /* ===== 顶部状态栏 ===== */
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.6rem 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .status__title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.03em;
+        }
+        .status__input {
+            flex: 1;
+            min-width: 140px;
+            max-width: 260px;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-btn);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: all var(--transition);
+            box-shadow: 0 0 0 0 transparent;
+        }
+        .status__input:focus {
+            border-color: var(--neon-cyan);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.05);
+        }
+        .status__input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        @media (max-width: 500px) {
+            .status__title {
+                font-size: 1.2rem;
+            }
+            .status__input {
+                min-width: 100px;
+                max-width: 100%;
+                font-size: 0.75rem;
+                padding: 0.4rem 1rem;
+            }
+        }
+
+        /* ===== 卡片内容区 ===== */
+        .cards {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-card);
+            padding: 1.5rem 2rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: all var(--transition);
+            min-height: 200px;
+            overflow-y: auto;
+        }
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.01em;
+        }
+        .card__header span {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.15));
+        }
+
+        .card__list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            list-style: none;
+        }
+        .card__list li {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        .card__list li:last-child {
+            border-bottom: none;
+        }
+        .card__list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all var(--transition);
+            border-bottom: 1px solid transparent;
+            display: inline-block;
+        }
+        .card__list a:hover {
+            color: var(--neon-cyan);
+            border-bottom-color: var(--neon-cyan);
+            transform: translateX(4px);
+            text-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+        }
+        .card__list a:visited {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        .card__list a:visited:hover {
+            color: var(--neon-cyan);
+            opacity: 1;
+        }
+        .card__list .cmd {
+            display: inline-block;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.1rem 0.8rem;
+            border-radius: 8px;
+            font-family: 'Menlo', 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.1);
+            word-break: break-all;
+            margin-top: 0.1rem;
+            letter-spacing: 0.2px;
+        }
+        .card__list .subnote {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .card__empty {
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 1rem 0;
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                padding: 1rem 1.2rem;
+                min-height: 140px;
+            }
+            .card__header {
+                font-size: 1rem;
+            }
+            .card__header span {
+                font-size: 1.2rem;
+            }
+            .card__list li {
+                font-size: 0.8rem;
+                padding: 0.3rem 0;
+            }
+            .card__list .cmd {
+                font-size: 0.65rem;
+                padding: 0.05rem 0.5rem;
+            }
+        }
+
+        /* ========== 内容切换动画 ========== */
+        .card--fade {
+            animation: cardFade 0.35s ease forwards;
+        }
+        @keyframes cardFade {
+            0% {
+                opacity: 0;
+                transform: translateY(12px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ========== 工具类 ========== */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ========== 滚动条美化 ========== */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-cyan);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-blue);
+        }
+    </style>
 </head>
-<style>
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-
-	h1 {
-		color: #426696;
-		font-family: Georgia, 'Times New Roman', Times, serif;
-		font-weight: 600;
-		font-size: 3rem;
-		opacity: 0.8;
-	}
-
-	h2,
-	p {
-		color: #426696;
-		font-family: Georgia, 'Times New Roman', Times, serif;
-		font-weight: 500;
-		opacity: 0.8;
-	}
-
-	h3 {
-		color: #426696;
-		font-family: Georgia, 'Times New Roman', Times, serif;
-		font-weight: 600;
-		opacity: 0.8;
-	}
-
-	a {
-		text-decoration: none;
-	}
-
-	p>a:hover {
-		color: violet;
-		font-weight: bolder;
-	}
-
-	a:visited {
-		color: dodgerblue;
-	}
-
-	main {
-		min-height: 100vh;
-		background: linear-gradient(to right top, #a3ca9a,#a3ca9a);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.glass {
-		background: white;
-		min-height: 80vh;
-		width: 62%;
-		background: linear-gradient(to right bottom,
-				rgb(255, 255, 255, 0.7),
-				rgb(255, 255, 255, 0.3));
-		border-radius: 2rem;
-		z-index: 2;
-		backdrop-filter: blur(2rem);
-		-webkit-backdrop-filter: blur(2rem);
-		display: flex;
-	}
-
-	.user {
-		cursor: pointer;
-	}
-
-	img {
-		width: 3rem;
-		height: 3rem;
-	}
-
-
-	.circle1,
-	.circle2 {
-		background: white;
-		background: linear-gradient(to right bottom,
-				rgb(255, 255, 255, 0.8),
-				rgb(255, 255, 255, 0.3));
-		height: 20rem;
-		width: 20rem;
-		position: absolute;
-		border-radius: 50%;
-	}
-
-	.circle1 {
-		top: 5%;
-		right: 15%;
-	}
-
-	.circle2 {
-		bottom: 5%;
-		left: 10%;
-	}
-
-	.dasboard {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-evenly;
-		text-align: center;
-		background: linear-gradient(to right bottom,
-				rgb(255, 255, 255, 0.7),
-				rgb(255, 255, 255, 0.3));
-		border-radius: 2rem;
-	}
-
-	.link {
-		display: flex;
-		margin: 2rem 0rem;
-		padding: 1rem 2rem;
-		align-items: center;
-		cursor: pointer;
-	}
-
-	.link h2 {
-		padding: 0rem 1rem;
-	}
-
-	.underline {
-		border: solid 2px #6cdbeb;
-		box-shadow: 20px 38px 34px -26px #bae4eb;
-		border-radius: 255px 15px 225px 15px/255px 15px 255px 15px;
-		transition: border-radius .5s ease;
-
-	}
-
-
-	.listcards {
-		flex: 2;
-	}
-
-	.pro {
-		background: linear-gradient(to right top, #d4f0ce,#d4f0ce);
-		border-radius: 1rem;
-		color: white;
-		padding: 1rem;
-		display: flex;
-		width: 92%;
-		align-items: center;
-		position: relative;
-	}
-
-	.pro img {
-		position: absolute;
-		right: 6%;
-	}
-
-	.pro h3 {
-		color: #287a54;
-		width: 60%;
-		opacity: 0.8;
-		font-weight: 600;
-	}
-
-	.status {
-		margin-bottom: 2rem;
-	}
-
-	.status input {
-		background: linear-gradient(to right bottom,
-				rgb(255, 255, 255, 0.7),
-				rgb(255, 255, 255, 0.3));
-		border: none;
-		width: 50%;
-		padding: 0.5rem;
-		border-radius: 2rem;
-
-	}
-
-	.listcards {
-		margin: 2rem;
-		display: flex;
-		flex-direction: column;
-		/* justify-content:space-evenly; */
-	}
-
-	.card {
-		display: flex;
-		background: linear-gradient(to right bottom,
-				rgb(255, 255, 255, 0.8),
-				rgb(255, 255, 255, 0.5));
-		border-radius: 1rem;
-		margin: 2rem 0rem;
-		padding: 1rem;
-		box-shadow: 6px 6px 20px rgb(122, 122, 122, 0.2);
-		height: 80%;
-		/* justify-content: space-between; */
-
-	}
-
-	.card-info p {
-		margin-top: 8px
-	}
-
-
-	.progress {
-		background: linear-gradient(to right top, #65dfc9, #6cdbeb);
-		width: 100%;
-		height: 6%;
-		border-radius: 1rem;
-		position: relative;
-		overflow: hidden;
-	}
-
-	.progress::after {
-		content: "";
-		width: 100%;
-		height: 100%;
-		background: rgb(236, 236, 236);
-		position: absolute;
-		left: 60%;
-	}
-
-	/* .card-info {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	} */
-	.percentage {
-		font-weight: bold;
-		background: linear-gradient(to right top, #65dfc9, #6cdbeb);
-		background-clip: text;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
-</style>
-<script type="text/javascript" src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 
 <body>
-	<main>
-		<section class="glass">
-			<div class="dasboard">
-				<div class="user">
-					<img src="./img/1.png" alt="">
-					<h3>keioi</h3>
-					<p>人生如逆旅，我亦是行人。</p>
-				</div>
-				<div class="links">
-					<div class="link" id='moon'>
-						<img src="./img/2.png" alt="">
-						<h2>游戏</h2>
-					</div>
-					<div class="link" id='love'>
-						<img src="./img/3.png" alt="">
-						<h2>视频</h2>
-					</div>
-					<div class="link" id='flower'>
-						<img src="./img/4.png" alt="">
-						<h2>系统</h2>
-					</div>
-				</div>
-				<div class="pro">
-					<h3>一花一世界，一木一浮生，一草一天堂。</h3>
-					<img src="./img/5.png" alt="">
-				</div>
-			</div>
-			<div class="listcards">
-				<div class="status">
-					<h1>no search</h1>
-					<input type="text">
-				</div>
-				<div class="cards">
-					<div class="card" id='jax'>
-						<img src="./img/6.png" alt="">
-						<div class="card-info">
-							<h2>我的 web's</h2>
-							<p><a href="https://www.keioi.cn" target="_blank">keioi小哥</a></p>
-							<p> <a href="https://keiooi.github.io/tool/" target="_blank">kei工具</a></p>
-                                                        <p> <a href="https://keiooi.github.io/chat/" target="_blank">车销量chart,chat</a></p>
-							<p><a href="https://pcpc.pages.dev" target="_blank">win查询电脑配置/激活方法</a>(cloudflare源)</p>
-                                                        <p><a href="https://keiooi.github.io/awin/" target="_blank">win查询电脑配置/激活方法</a>(github源)</p>
-							<p><a href="https://keioiawin.netlify.app/" target="_blank">win查询电脑配置/激活方法</a>(netlify源)</p>
-							<p><a href="https://keiooi-awin.surge.sh/" target="_blank">win查询电脑配置/激活方法</a>(surge源)</p>
-							<p><a href="https://winat.edgeone.cool" target="_blank">win查询电脑配置/激活方法</a>(edgeone源)</p>
-							<!-- <div class="progress"></div> -->
-						</div>
-						<h2 class="percentage"></h2>
-					</div>
 
+    <!-- ===== 抽象霓虹背景光晕 ===== -->
+    <div class="bg-glow bg-glow--1"></div>
+    <div class="bg-glow bg-glow--2"></div>
+    <div class="bg-glow bg-glow--3"></div>
 
-				</div>
-			</div>
-		</section>
-	</main>
-	<div class="circle11"></div>
-	<div class="circle21"></div>
+    <!-- ===== 主容器 ===== -->
+    <main class="glass">
+
+        <!-- ====== 左侧导航 ====== -->
+        <nav class="dashboard" role="navigation" aria-label="主导航">
+
+            <!-- 用户信息 -->
+            <div class="user" id="userReset" role="button" tabindex="0" aria-label="点击刷新页面">
+                <span class="user__avatar">🧑‍💻</span>
+                <div>
+                    <div class="user__name">keioi</div>
+                    <div class="user__bio">人生如逆旅，我亦是行人</div>
+                </div>
+            </div>
+
+            <!-- 导航链接 -->
+            <div class="links">
+                <!-- <div class="link link--active" data-tab="home" role="button" tabindex="0">
+                    <span class="link__icon">🏠</span>
+                    <span class="link__label">主页</span>
+                </div> -->
+                <div class="link" data-tab="game" role="button" tabindex="0">
+                    <span class="link__icon">🎮</span>
+                    <span class="link__label">游戏</span>
+                </div>
+                <div class="link" data-tab="video" role="button" tabindex="0">
+                    <span class="link__icon">📹</span>
+                    <span class="link__label">视频</span>
+                </div>
+                <div class="link" data-tab="system" role="button" tabindex="0">
+                    <span class="link__icon">⚙️</span>
+                    <span class="link__label">系统</span>
+                </div>
+            </div>
+
+            <!-- Pro 区域 -->
+            <div class="pro">
+                <span class="pro__emoji">✨</span>
+                <span class="pro__text">一花一世界，一木一浮生</span>
+            </div>
+
+        </nav>
+
+        <!-- ====== 右侧内容区 ====== -->
+        <section class="content">
+
+            <!-- 状态栏 -->
+            <div class="status">
+                <!-- <h1 class="status__title" id="statusTitle">🏠 主页</h1> -->
+                <input class="status__input" type="text" placeholder="🔍 搜索不可用…" aria-label="搜索" disabled />
+            </div>
+
+            <!-- 卡片容器 -->
+            <div class="cards">
+                <div class="card" id="cardContainer">
+                    <!-- 由 JavaScript 动态渲染 -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            //  1. 内容数据（）
+            // ============================================================
+            const CONTENT = {
+                home: {
+                    icon: '🏠',
+                    title: '主页',
+                    items: [
+                        { label: 'keioi小站', url: 'https://www.keioi.cn' },
+                        { label: 'kei工具', url: 'https://keiooi.github.io/tool/' },
+                        { label: '车销量chart,chat', url: 'https://keiooi.github.io/chat/' },
+                        { label: 'win查询电脑配置/激活方法 (cloudflare)', url: 'https://pcpc.pages.dev' },
+                        { label: 'win查询电脑配置/激活方法 (github)', url: 'https://keiooi.github.io/awin/' },
+                        { label: 'win查询电脑配置/激活方法 (netlify)', url: 'https://keioiawin.netlify.app/' },
+                        { label: 'win查询电脑配置/激活方法 (surge)', url: 'https://keiooi-awin.surge.sh/' },
+                        { label: 'win查询电脑配置/激活方法 (edgeone)', url: 'https://winat.edgeone.cool' },
+                    ]
+                },
+                game: {
+                    icon: '🎮',
+                    title: '游戏',
+                    items: [
+                        { label: 'Minecraft JAVA 版', url: 'https://www.minecraft.net/zh-hans/download' },
+                        { label: 'Java 版启动器 (HMCL)', url: 'https://hmcl.huangyuhui.net/download' },
+                    ]
+                },
+                video: {
+                    icon: '📹',
+                    title: '视频',
+                    items: [
+                        { label: 'OBS 录屏', url: 'https://obsproject.com/' },
+                        { label: 'cutepdf 虚拟打印机', url: 'https://www.cutepdf.com/index.htm' },
+                        { label: 'gifcam GIF 录制', url: 'https://gifcam.en.softonic.com/' },
+                    ]
+                },
+                system: {
+                    icon: '⚙️',
+                    title: '系统',
+                    items: [
+                        { label: 'IT天空 · 优启通 PE', url: 'https://www.itsk.com/' },
+                        { label: 'msdn 我告诉你 · 原版系统', url: 'https://msdn.itellyou.cn/' },
+                        { label: '蓝点 · 系统下载', url: 'https://www.landiannews.com/download-category/down/os' },
+                    ],
+                    extra: [
+                        '运行前关闭 360 卫士等',
+                        'Win8.1+ 管理员打开 PowerShell 执行：',
+                        'irm https://get.activated.win | iex',
+                        { label: 'Win 查询配置 / 激活方法', url: 'https://keiooi.github.io/awin/' },
+                    ]
+                }
+            };
+
+            // ============================================================
+            //  2. 渲染函数
+            // ============================================================
+            function renderContent(tabKey) {
+                const data = CONTENT[tabKey];
+                if (!data) return;
+
+                const container = document.getElementById('cardContainer');
+                if (!container) return;
+
+                // 构建列表
+                let listHtml = '';
+                if (data.items && data.items.length) {
+                    data.items.forEach(item => {
+                        if (typeof item === 'string') {
+                            listHtml += `<li>${item}</li>`;
+                        } else {
+                            listHtml += `<li><a href="${item.url}" target="_blank" rel="noopener">${item.label}</a></li>`;
+                        }
+                    });
+                }
+
+                // 额外内容（系统页特有）
+                let extraHtml = '';
+                if (data.extra && data.extra.length) {
+                    data.extra.forEach(item => {
+                        if (typeof item === 'string') {
+                            if (item.startsWith('irm ') || item.startsWith('http')) {
+                                extraHtml += `<li><span class="cmd">${item}</span></li>`;
+                            } else {
+                                extraHtml += `<li>${item}</li>`;
+                            }
+                        } else if (item.url) {
+                            extraHtml += `<li><a href="${item.url}" target="_blank" rel="noopener">${item.label}</a></li>`;
+                        }
+                    });
+                }
+
+                // 组装卡片
+                container.innerHTML = `
+                    <div class="card__header">
+                        <span>${data.icon}</span>
+                        ${data.title}
+                    </div>
+                    <ul class="card__list">
+                        ${listHtml}
+                        ${extraHtml}
+                    </ul>
+                `;
+
+                // 触发淡入动画
+                container.classList.remove('card--fade');
+                void container.offsetWidth;
+                container.classList.add('card--fade');
+
+                // 更新标题
+                const titleEl = document.getElementById('statusTitle');
+                if (titleEl) {
+                    titleEl.textContent = `${data.icon} ${data.title}`;
+                }
+            }
+
+            // ============================================================
+            //  3. 导航切换
+            // ============================================================
+            let currentTab = 'home';
+
+            function switchTab(tabKey) {
+                if (tabKey === currentTab) return;
+                currentTab = tabKey;
+
+                // 更新导航高亮
+                document.querySelectorAll('.link').forEach(el => {
+                    el.classList.toggle('link--active', el.dataset.tab === tabKey);
+                });
+
+                // 渲染内容
+                renderContent(tabKey);
+            }
+
+            // ============================================================
+            //  4. 事件绑定（原生 JS）
+            // ============================================================
+            document.addEventListener('DOMContentLoaded', function() {
+
+                // ---- 4-a 导航点击 ----
+                const links = document.querySelectorAll('.link');
+                links.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        const tab = this.dataset.tab;
+                        if (tab) switchTab(tab);
+                    });
+                    link.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const tab = this.dataset.tab;
+                            if (tab) switchTab(tab);
+                        }
+                    });
+                });
+
+                // ---- 4-b 用户头像点击刷新 ----
+                const userReset = document.getElementById('userReset');
+                if (userReset) {
+                    userReset.addEventListener('click', function() {
+                        location.reload();
+                    });
+                    userReset.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            location.reload();
+                        }
+                    });
+                }
+
+                // ---- 4-c 搜索框占位交互 ----
+                const searchInput = document.querySelector('.status__input');
+                if (searchInput) {
+                    searchInput.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            const val = this.value.trim();
+                            if (val) {
+                                const container = document.getElementById('cardContainer');
+                                if (container) {
+                                    const origData = currentTab;
+                                    container.innerHTML = `
+                                        <div style="padding:1.5rem 0;text-align:center;color:var(--text-secondary);">
+                                            <div style="font-size:2.4rem;margin-bottom:0.5rem;filter:drop-shadow(0 0 20px rgba(0,242,254,0.2));">🔍</div>
+                                            <p style="font-weight:500;font-size:1rem;">你搜了：「${val}」</p>
+                                            <p style="font-size:0.85rem;opacity:0.6;margin-top:0.2rem;">演示交互，无实际搜索功能</p>
+                                            <button id="searchBack" style="
+                                                margin-top:1.5rem;
+                                                padding:0.5rem 2rem;
+                                                border:none;
+                                                border-radius:40px;
+                                                background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+                                                color:#fff;
+                                                font-weight:600;
+                                                cursor:pointer;
+                                                font-family:var(--font);
+                                                box-shadow:0 4px 20px rgba(0,242,254,0.2);
+                                                transition:all 0.2s;
+                                                font-size:0.9rem;
+                                            ">返回</button>
+                                        </div>
+                                    `;
+                                    const backBtn = document.getElementById('searchBack');
+                                    if (backBtn) {
+                                        backBtn.addEventListener('click', function() {
+                                            renderContent(origData);
+                                        });
+                                        backBtn.addEventListener('mouseenter', function() {
+                                            this.style.transform = 'scale(1.02)';
+                                            this.style.boxShadow = '0 8px 30px rgba(0,242,254,0.3)';
+                                        });
+                                        backBtn.addEventListener('mouseleave', function() {
+                                            this.style.transform = 'scale(1)';
+                                            this.style.boxShadow = '0 4px 20px rgba(0,242,254,0.2)';
+                                        });
+                                    }
+                                    container.classList.remove('card--fade');
+                                }
+                            } else {
+                                this.placeholder = '✨ 输入点什么吧…';
+                                setTimeout(() => {
+                                    this.placeholder = '🔍 搜索…';
+                                }, 1200);
+                            }
+                            this.value = '';
+                        }
+                    });
+                }
+
+                // ---- 4-d 初始渲染（默认显示主页） ----
+                renderContent('home');
+
+            });
+
+        })();
+    </script>
+
 </body>
-<script>
-	$(document).ready(function () {
-		$('#moon').click(function () {
-			$('#jax').load('./t1.html')
-			// $('#moon>h2').addClass('underline')
-			// $('#love>h2').removeClass('underline')
-			// $('#flower>h2').removeClass('underline')
-		})
-		$('#love').click(function () {
-			$('#jax').load('./t2.html')
-
-		})
-		$('#flower').click(function () {
-			$('#jax').load('./t3.html')
-
-		})
-		$('.user').click(function () {
-			location.reload();
-		})
-
-		$('.link').click(function () {
-			$('.link').removeClass('underline')
-			$(this).addClass('underline')
-		})
-
-
-
-
-	})
-
-</script>
 
 </html>
